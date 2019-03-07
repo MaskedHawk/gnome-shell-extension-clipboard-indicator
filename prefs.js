@@ -104,6 +104,8 @@ const App = new Lang.Class({
                       _("Previous entry"));
         addKeybinding(this.field_keybinding.model, SettingsSchema, "next-entry",
                       _("Next entry"));
+        addKeybinding(this.field_keybinding.model, SettingsSchema, "favorite-mode",
+                      _("Favorite Mode"));
 
         var that = this;
         this.field_keybinding_activation = new Gtk.Switch();

@@ -50,6 +50,10 @@ msgstr "Entrée précédente"
 msgid "Next entry"
 msgstr "Entrée suivante"
 
+#: prefs.js:92
+msgid "Favorite Mode"
+msgstr "Mode Favoris"
+
 #: prefs.js:103
 msgid "History Size"
 msgstr "Taille de l'historique"

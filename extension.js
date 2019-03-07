@@ -23,6 +23,7 @@ const CLIPBOARD_TYPE = St.ClipboardType.CLIPBOARD;
 const SETTING_KEY_CLEAR_HISTORY = "clear-history";
 const SETTING_KEY_PREV_ENTRY = "prev-entry";
 const SETTING_KEY_NEXT_ENTRY = "next-entry";
+const SETTING_KEY_FAVORITE_MODE = "favorite-mode";
 const SETTING_KEY_TOGGLE_MENU = "toggle-menu";
 const INDICATOR_ICON = 'edit-paste-symbolic';
 
@@ -70,7 +71,7 @@ const ClipboardIndicator = Lang.Class({
         this.parent(0.0, "ClipboardIndicator");
         this._shortcutsBindingIds = [];
         this.clipItemsRadioGroup = [];
-
+        this.favoriteMode = false;
         let hbox = new St.BoxLayout({ style_class: 'panel-status-menu-box clipboard-indicator-hbox' });
         this.icon = new St.Icon({ icon_name: INDICATOR_ICON,
             style_class: 'system-status-icon clipboard-indicator-icon' });
@@ -343,6 +344,13 @@ const ClipboardIndicator = Lang.Class({
                 that.clipItemsRadioGroup.splice(idx,1);
             }
         });
+        that.favoritesSection._getMenuItems().forEach(function (mItem) {
+            if (!mItem.currentlySelected) {
+                let idx = that.clipItemsRadioGroup.indexOf(mItem);
+                mItem.destroy();
+                that.clipItemsRadioGroup.splice(idx,1);
+            }
+        });
         that._updateCache();
         that._showNotification(_("Clipboard history cleared"));
     },
@@ -455,7 +463,7 @@ const ClipboardIndicator = Lang.Class({
                 });
 
                 if (text && registry.indexOf(text) < 0) {
-                    that._addEntry(text, false, true, false);
+                    that._addEntry(text, that.favoriteMode, true, false);
                     that._removeOldestEntries();
                     if(NOTIFY_ON_COPY)
                         that._showNotification(_("Copied to clipboard"));
@@ -637,6 +645,7 @@ const ClipboardIndicator = Lang.Class({
         this._bindShortcut(SETTING_KEY_CLEAR_HISTORY, this._removeAll);
         this._bindShortcut(SETTING_KEY_PREV_ENTRY, this._previousEntry);
         this._bindShortcut(SETTING_KEY_NEXT_ENTRY, this._nextEntry);
+        this._bindShortcut(SETTING_KEY_FAVORITE_MODE, this._favoriteMode);
         this._bindShortcut(SETTING_KEY_TOGGLE_MENU, this._toggleMenu);
     },
 
@@ -757,7 +766,10 @@ const ClipboardIndicator = Lang.Class({
             return false;
         });
     },
-
+    _favoriteMode: function(){
+        this.favoriteMode = this.favoriteMode ? false : true;
+        log('[EXTENSION_LOG]', this.favoriteMode);
+    },
     _toggleMenu: function(){
         this.menu.toggle();
     }
